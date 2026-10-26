@@ -4981,7 +4981,7 @@ function initialize()
     -- The version of qw for logging purposes. Run the make-qw.sh script to set
     -- this variable automatically based on the latest annotated git tag and
     -- commit, or change it here to a custom version string.
-    qw.version = "0.4-a-66-g8698adc"
+    qw.version = "0.4-a-68-g9051b45"
 
     initialize_rc_variables()
 
@@ -12515,13 +12515,13 @@ function plan_special_purification()
         return use_purification()
     end
 
-    local str, mstr = you.strength()
-    local int, mint = you.intelligence()
-    local dex, mdex = you.dexterity()
-    if str < mstr
-            and (str < mstr - 5 or str < 3)
-                or int < mint and int < 3
-                or dex < mdex and (dex < mdex - 8 or dex < 3) then
+    -- 0.34 removed the (current, max) pair from you.strength()/etc., so
+    -- compare against absolute floors and use the drain counter as a
+    -- proxy for recent drain effects.
+    if you.drain() > 0
+            or you.strength() < 3
+            or you.intelligence() < 3
+            or you.dexterity() < 3 then
         return use_purification()
     end
 
@@ -15931,11 +15931,13 @@ function want_to_be_surrounded()
 end
 
 function max_strength()
-    return select(2, you.strength())
+    -- DCSS 0.34 removed the (current, max) pair from you.strength();
+    -- use the current value as the best available approximation.
+    return you.strength()
 end
 
 function max_dexterity()
-    return select(2, you.dexterity())
+    return you.dexterity()
 end
 ------------------
 -- Functions and data related to god worship.

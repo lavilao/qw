@@ -650,9 +650,11 @@ function want_to_be_surrounded()
 end
 
 function max_strength()
-    return select(2, you.strength())
+    -- DCSS 0.34 removed the (current, max) pair from you.strength();
+    -- use the current value as the best available approximation.
+    return you.strength()
 end
 
 function max_dexterity()
-    return select(2, you.dexterity())
+    return you.dexterity()
 end

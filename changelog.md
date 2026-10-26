@@ -1,5 +1,20 @@
 # Changelog (through 0.4-a-49-g22c4ca0)
 
+## 0.5.1
+
+Runtime fixes found by running qw inside DCSS 0.34.1.
+
+### API and Compatibility
+* Fix a crash on the first turn ("attempt to compare nil with number"):
+  DCSS 0.34 removed the `(current, max)` return pair from
+  `you.strength()`, `you.intelligence()` and `you.dexterity()` (they now
+  return a single value). `max_strength()` and `max_dexterity()` now use
+  the current stat values; skill valuations self-correct as temporary
+  stat drain wears off.
+* Rewrite `plan_special_purification()` without the removed max stats:
+  Elyvilon's Purification is now requested when `you.drain()` reports
+  active drain or any current stat falls below 3.
+
 ## 0.5.0
 
 This version supports DCSS 0.34.

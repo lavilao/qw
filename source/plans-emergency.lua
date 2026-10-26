@@ -936,13 +936,13 @@ function plan_special_purification()
         return use_purification()
     end
 
-    local str, mstr = you.strength()
-    local int, mint = you.intelligence()
-    local dex, mdex = you.dexterity()
-    if str < mstr
-            and (str < mstr - 5 or str < 3)
-                or int < mint and int < 3
-                or dex < mdex and (dex < mdex - 8 or dex < 3) then
+    -- 0.34 removed the (current, max) pair from you.strength()/etc., so
+    -- compare against absolute floors and use the drain counter as a
+    -- proxy for recent drain effects.
+    if you.drain() > 0
+            or you.strength() < 3
+            or you.intelligence() < 3
+            or you.dexterity() < 3 then
         return use_purification()
     end
 
