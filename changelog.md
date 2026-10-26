@@ -1,5 +1,32 @@
 # Changelog (through 0.4-a-49-g22c4ca0)
 
+## 0.5.2
+
+Runtime fixes found by running qw inside DCSS 0.34.1 across multiple
+seeds (the bot explores, fights and casts with no Lua errors).
+
+### API and Compatibility
+* Fix a crash while evaluating potions of mutation ("bad argument #1 to
+  'mutation': No such mutation"): DCSS 0.34 removed the
+  "inability to drink after injury", "inability to read after injury",
+  "berserk" and "deterioration" mutations, and `you.mutation()` now raises
+  an error for unknown mutation names instead of returning 0. The removed
+  mutations are no longer checked by `want_cure_mutations()`, and
+  `base_mutation()` now returns 0 for any unknown mutation name.
+* `max_strength()` and `max_dexterity()` keep using the `(current, max)`
+  pair on DCSS versions that still provide it and fall back to the current
+  stat on 0.34+, where `you.strength()`/`you.dexterity()` return a single
+  value.
+* `plan_special_purification()` now compares against the maximum stats on
+  DCSS versions that provide them, and on 0.34+ requests Elyvilon's
+  Purification when `you.drain()` reports active drain (Purification cures
+  drain as of 0.34) or any current stat falls below 3.
+
+### Robustness
+* A runtime error inside the main coroutine now resets it, so the next
+  turn starts fresh instead of qw spamming "cannot resume dead coroutine"
+  and freezing for the rest of the game.
+
 ## 0.5.1
 
 Runtime fixes found by running qw inside DCSS 0.34.1.

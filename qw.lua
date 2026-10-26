@@ -4981,7 +4981,7 @@ function initialize()
     -- The version of qw for logging purposes. Run the make-qw.sh script to set
     -- this variable automatically based on the latest annotated git tag and
     -- commit, or change it here to a custom version string.
-    qw.version = "0.4-a-68-g9051b45"
+    qw.version = "0.4-a-69-g3b76181"
 
     initialize_rc_variables()
 
@@ -6101,8 +6101,11 @@ function run_qw()
 
     local okay, err = coroutine.resume(qw.update_coroutine)
     if not okay then
+        -- Reset the coroutine so that the next turn starts fresh instead of
+        -- trying to resume a dead coroutine forever.
+        qw.update_coroutine = nil
+        qw.do_dummy_action = nil
         error("Error in coroutine: " .. err)
-        qw.abort = true
     end
 
     if coroutine.status(qw.update_coroutine) == "dead" then
@@ -12515,13 +12518,26 @@ function plan_special_purification()
         return use_purification()
     end
 
-    -- 0.34 removed the (current, max) pair from you.strength()/etc., so
-    -- compare against absolute floors and use the drain counter as a
-    -- proxy for recent drain effects.
-    if you.drain() > 0
-            or you.strength() < 3
-            or you.intelligence() < 3
-            or you.dexterity() < 3 then
+    -- DCSS 0.34 removed the maximum stat return values from
+    -- you.strength()/you.intelligence()/you.dexterity(). There we use the
+    -- drain counter (Purification also cures drain as of 0.34) and absolute
+    -- stat floors as the signal instead, and compare against the maximums
+    -- where they're still available.
+    local str, mstr = you.strength()
+    local int, mint = you.intelligence()
+    local dex, mdex = you.dexterity()
+    if not mstr or not mint or not mdex then
+        if you.drain() > 0 or str < 3 or int < 3 or dex < 3 then
+            return use_purification()
+        end
+
+        return false
+    end
+
+    if str < mstr
+            and (str < mstr - 5 or str < 3)
+                or int < mint and int < 3
+                or dex < mdex and (dex < mdex - 8 or dex < 3) then
         return use_purification()
     end
 
@@ -13481,18 +13497,17 @@ function weapon_brand_is_great(weapon)
 end
 
 function want_cure_mutations()
+    -- The "inability to drink/read after injury", "berserk" and
+    -- "deterioration" mutations no longer exist as of DCSS 0.34, so they
+    -- aren't checked here anymore.
     return base_mutation("inhibited regeneration") > 0
             and you.race() ~= "Ghoul"
         or base_mutation("teleportitis") > 0
-        or base_mutation("inability to drink after injury") > 0
-        or base_mutation("inability to read after injury") > 0
         or base_mutation("deformed body") > 0
             and you.race() ~= "Naga"
             and you.race() ~= "Armataur"
             and (armour_plan() == "heavy"
                 or armour_plan() == "large")
-        or base_mutation("berserk") > 0
-        or base_mutation("deterioration") > 1
         or base_mutation("frail") > 0
         or base_mutation("no potion heal") > 0
             and you.race() ~= "Vine Stalker"
@@ -15767,7 +15782,16 @@ function player_move_delay()
 end
 
 function base_mutation(str)
-    return you.mutation(str) - you.temp_mutation(str)
+    -- you.mutation() raises an error for unknown mutation names as of
+    -- DCSS 0.34, so treat any unknown name as level 0.
+    local okay, base, temp = pcall(function()
+        return you.mutation(str), you.temp_mutation(str)
+    end)
+    if not okay then
+        return 0
+    end
+
+    return base - temp
 end
 
 function drain_level()
@@ -15930,14 +15954,17 @@ function want_to_be_surrounded()
         end)
 end
 
+-- DCSS 0.34 removed the maximum stat return values from
+-- you.strength()/you.dexterity(), so fall back to the current stat when the
+-- maximum isn't available.
 function max_strength()
-    -- DCSS 0.34 removed the (current, max) pair from you.strength();
-    -- use the current value as the best available approximation.
-    return you.strength()
+    local str, max_str = you.strength()
+    return max_str or str
 end
 
 function max_dexterity()
-    return you.dexterity()
+    local dex, max_dex = you.dexterity()
+    return max_dex or dex
 end
 ------------------
 -- Functions and data related to god worship.

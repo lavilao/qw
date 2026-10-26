@@ -353,18 +353,17 @@ function weapon_brand_is_great(weapon)
 end
 
 function want_cure_mutations()
+    -- The "inability to drink/read after injury", "berserk" and
+    -- "deterioration" mutations no longer exist as of DCSS 0.34, so they
+    -- aren't checked here anymore.
     return base_mutation("inhibited regeneration") > 0
             and you.race() ~= "Ghoul"
         or base_mutation("teleportitis") > 0
-        or base_mutation("inability to drink after injury") > 0
-        or base_mutation("inability to read after injury") > 0
         or base_mutation("deformed body") > 0
             and you.race() ~= "Naga"
             and you.race() ~= "Armataur"
             and (armour_plan() == "heavy"
                 or armour_plan() == "large")
-        or base_mutation("berserk") > 0
-        or base_mutation("deterioration") > 1
         or base_mutation("frail") > 0
         or base_mutation("no potion heal") > 0
             and you.race() ~= "Vine Stalker"

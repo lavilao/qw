@@ -486,7 +486,16 @@ function player_move_delay()
 end
 
 function base_mutation(str)
-    return you.mutation(str) - you.temp_mutation(str)
+    -- you.mutation() raises an error for unknown mutation names as of
+    -- DCSS 0.34, so treat any unknown name as level 0.
+    local okay, base, temp = pcall(function()
+        return you.mutation(str), you.temp_mutation(str)
+    end)
+    if not okay then
+        return 0
+    end
+
+    return base - temp
 end
 
 function drain_level()
@@ -649,12 +658,15 @@ function want_to_be_surrounded()
         end)
 end
 
+-- DCSS 0.34 removed the maximum stat return values from
+-- you.strength()/you.dexterity(), so fall back to the current stat when the
+-- maximum isn't available.
 function max_strength()
-    -- DCSS 0.34 removed the (current, max) pair from you.strength();
-    -- use the current value as the best available approximation.
-    return you.strength()
+    local str, max_str = you.strength()
+    return max_str or str
 end
 
 function max_dexterity()
-    return you.dexterity()
+    local dex, max_dex = you.dexterity()
+    return max_dex or dex
 end

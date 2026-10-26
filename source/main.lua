@@ -94,8 +94,11 @@ function run_qw()
 
     local okay, err = coroutine.resume(qw.update_coroutine)
     if not okay then
+        -- Reset the coroutine so that the next turn starts fresh instead of
+        -- trying to resume a dead coroutine forever.
+        qw.update_coroutine = nil
+        qw.do_dummy_action = nil
         error("Error in coroutine: " .. err)
-        qw.abort = true
     end
 
     if coroutine.status(qw.update_coroutine) == "dead" then
