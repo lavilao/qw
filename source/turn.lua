@@ -17,10 +17,13 @@ function turn_memo(name, func)
 end
 
 function turn_memo_args(name, func, ...)
-    assert(arg.n > 0)
+    -- Note: crawl uses Lua 5.4 as of DCSS 0.34, so we use select() instead of
+    -- the removed Lua 5.1-style implicit arg table.
+    local num_args = select('#', ...)
+    assert(num_args > 0)
 
     local parent, key
-    for j = 1, arg.n do
+    for j = 1, num_args do
         if j == 1 then
             parent = qw.turn_memos
             key = name
@@ -32,13 +35,12 @@ function turn_memo_args(name, func, ...)
 
         parent = parent[key]
 
-        key = arg[j]
-        -- We turn any nil argument into false so we can pass on a valid set of
-        -- args to the function. This might cause unexpected behaviour for an
-        -- arbitrary function.
+        key = select(j, ...)
+        -- We turn any nil argument into false so it can be used as a table
+        -- key. This might cause unexpected behaviour for an arbitrary
+        -- function.
         if key == nil then
             key = false
-            arg[j] = false
         end
     end
 

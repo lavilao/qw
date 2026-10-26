@@ -1,6 +1,9 @@
 -----------------------------------------
 -- monster functions and data
 
+-- The enum value of MONS_PANDEMONIUM_LORD, which changes whenever monsters
+-- are added or removed. This is the value for DCSS 0.34 (verified by
+-- compiling monster-type.h from the 0.34.1 tag).
 const.pan_lord_type = 344
 
 const.attitude = {
@@ -128,15 +131,21 @@ local scary_monsters = {
 
     ["ironbound frostheart"] = { xl = 20, resists = { rC = 0.75 } },
     ["ironbound thunderhulk"] = { xl = 20, resists = { rElec = 0.75 } },
+    ["hoarfrost cannon"] = { xl = 20, resists = { rC = 0.75 } },
 
+    ["apis"] = { xl = 24 },
     ["azure jelly"] = { xl = 24, resists = { rC = 0.75 } },
+    ["boundless tesseract"] = { xl = 24 },
     ["enormous slime creature"] = { xl = 24 },
     ["fire giant"] = { xl = 24, resists = { rF = 0.75 } },
     ["frost giant"] = { xl = 24, resists = { rC = 0.75 } },
     ["hell hog"] = { xl = 24, resists = { rF = 0.75 } },
+    ["hellfire mortar"] = { xl = 24, resists = { rF = 0.75 } },
     ["orange crystal statue"] = { xl = 24 },
+    ["orb of winter"] = { xl = 24, resists = { rC = 0.75 } },
     ["shadow dragon"] = { xl = 24, resists = { rN = 0.75 } },
     ["spriggan air mage"] = { xl = 24, resists = { rElec = 0.75 } },
+    ["star jelly"] = { xl = 24, resists = { rCorr = 0.75 } },
     ["storm dragon"] = { xl = 24, resists = { rElec = 0.75 } },
     ["titan"] = { xl = 24, resists = { rElec = 0.5 } },
     ["Margery"] = { xl = 24, resists = { rF = 0.75 } },
@@ -216,6 +225,7 @@ local cold_resistance_monsters = {
     ["freezing wraith"] = check_resist(13, "rC", 1),
 
     ["Ice Fiend"] = 100,
+    ["orb of winter"] = 100,
     ["Vv"] = 100,
 }
 

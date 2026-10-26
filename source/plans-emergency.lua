@@ -34,7 +34,7 @@ function use_ru_healing()
 end
 
 function use_ely_healing()
-    use_ability("Greater Healing")
+    use_ability("Heal Self")
 end
 
 function use_purification()
@@ -51,7 +51,7 @@ end
 
 function plan_greater_servant()
     if can_greater_servant() and want_to_greater_servant() then
-        return use_ability("Greater Servant of Makhleb")
+        return use_ability("Infernal Servant")
     end
 
     return false
@@ -180,7 +180,7 @@ function plan_hydra_destruction()
         return false
     end
 
-    return use_ability("Major Destruction",
+    return use_ability("Unleash Destruction",
         "r" .. vector_move(enemy:x_pos(), enemy:y_pos()) .. "\r")
 end
 
@@ -434,9 +434,9 @@ end
 function plan_recall()
     if can_recall() and want_to_recall() then
         if you.god() == "Yredelemnul" then
-            use_ability("Recall Undead Slaves", "", true)
+            use_ability("Recall Undead Harvest", "", true)
         else
-            use_ability("Recall Orcish Followers", "", true)
+            use_ability("Recall Apostles", "", true)
         end
     end
 
@@ -468,10 +468,8 @@ function plan_slouch()
 end
 
 function plan_drain_life()
-    if can_drain_life() and want_to_drain_life() then
-        return use_ability("Drain Life")
-    end
-
+    -- The Yredelemnul rework in DCSS 0.33 removed the "Drain Life" ability,
+    -- so this plan no longer does anything.
     return false
 end
 
@@ -506,14 +504,6 @@ function want_to_slouch()
         and not you.teleporting()
         and you.piety_rank() == 6
         and estimate_slouch_damage() >= 6
-end
-
-function want_to_drain_life()
-    return qw.danger_in_los
-        and not dangerous_to_attack()
-        and not you.teleporting()
-        and count_enemies(qw.los_radius,
-            function(mons) return mons:res_draining() == 0 end)
 end
 
 function want_to_greater_servant()

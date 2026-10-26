@@ -277,17 +277,9 @@ function can_finesse()
 end
 
 function can_recall()
-    return you.god() == "Yredelemnul"
-            or you.god() == "Beogh" and you.piety_rank() >= 4
+    return (you.god() == "Yredelemnul" and you.piety_rank() >= 2
+            or you.god() == "Beogh" and you.piety_rank() >= 2)
         and not you.status("recalling")
-        and can_use_mp(2)
-        and can_invoke()
-end
-
-function can_drain_life()
-    return you.god() == "Yredelemnul"
-        and you.piety_rank() >= 4
-        and can_use_mp(6)
         and can_invoke()
 end
 
@@ -305,9 +297,11 @@ function can_slouch()
 end
 
 function can_ely_healing()
+    -- "Heal Self" (formerly "Greater Healing") requires piety rank 2 and 3
+    -- MP as of DCSS 0.34.
     return you.god() == "Elyvilon"
-        and you.piety_rank() >= 4
-        and can_use_mp(2)
+        and you.piety_rank() >= 2
+        and can_use_mp(3)
         and can_invoke()
 end
 
@@ -348,9 +342,12 @@ function can_grand_finale()
 end
 
 function can_greater_servant()
+    -- The Makhleb rework in DCSS 0.34 renamed "Greater Servant of Makhleb" to
+    -- "Infernal Servant", which now costs 8 HP and 4 MP.
     return you.god() == "Makhleb"
         and you.piety_rank() >= 5
         and you.hp() > 10
+        and can_use_mp(4)
         and can_invoke()
 end
 
@@ -369,9 +366,10 @@ function can_divine_warrior(ignore_mp)
 end
 
 function can_destruction()
+    -- The Makhleb rework in DCSS 0.34 renamed "Major Destruction" to "Unleash
+    -- Destruction", which now costs roughly 6.5% of max HP plus 2 HP.
     return you.god() == "Makhleb"
         and you.hp() > 6
-        and you.piety_rank() >= 4
         and can_invoke()
 end
 

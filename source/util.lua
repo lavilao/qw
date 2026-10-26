@@ -116,3 +116,34 @@ function compare_table_keys(a, b, keys, reversed_keys)
     end
     return false
 end
+
+-----------------------------------------
+-- Compatibility helpers for clua API changes in DCSS 0.33 and later.
+
+-- Returns a map of hotkey letters to ability names. This replaces the
+-- you.ability_table() function, which was removed in DCSS 0.33, with a
+-- construction based on you.ability_info(), whose entries have the format
+-- { name, currently_usable, hotkey }.
+function ability_table()
+    local abil_table = {}
+    local abil_info = you.ability_info()
+    if abil_info then
+        for _, abil in ipairs(abil_info) do
+            abil_table[abil[3]] = abil[1]
+        end
+    end
+    return abil_table
+end
+
+-- Returns an array of the names of available abilities. This replaces the
+-- you.abilities() function, which was removed in DCSS 0.33.
+function ability_names()
+    local names = {}
+    local abil_info = you.ability_info()
+    if abil_info then
+        for _, abil in ipairs(abil_info) do
+            table.insert(names, abil[1])
+        end
+    end
+    return names
+end

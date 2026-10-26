@@ -715,7 +715,8 @@ function evoked_attack_average_damage(mons, attack)
     local item = attack.items[1]
     local damage = item.evoke_damage
     damage = damage:gsub(".-(%d+)d(%d+).*", "%1 %2")
-    local dice, size = unpack(split(damage, " "))
+    -- table.unpack is required since crawl uses Lua 5.4 as of DCSS 0.34.
+    local dice, size = table.unpack(split(damage, " "))
     damage = dice * (1 + size) / 2
 
     local res_prop = const.monster_resist_props[attack.resist]

@@ -2,7 +2,7 @@
 -- The common plan functions and the overall turn plan.
 
 function use_ability(name, extra, mute)
-    for letter, abil in pairs(you.ability_table()) do
+    for letter, abil in pairs(ability_table()) do
         if abil == name then
             -- Want to make sure we don't get a skill selection screen if we
             -- were training Dodging.

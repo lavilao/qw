@@ -309,11 +309,14 @@ function miasma_immune()
 end
 
 function in_bad_form(include_tree)
+    -- These are the forms crawl marks as badform (via is_badform in the form
+    -- data) as of DCSS 0.34.
     local form = you.transform()
     return form == "bat"
         or form == "pig"
         or form == "wisp"
         or form == "fungus"
+        or form == "jelly"
         or include_tree and form == "tree"
 end
 
@@ -321,17 +324,34 @@ function transformed()
     return you.transform() ~= ""
 end
 
+-- Forms that meld our weapons as of DCSS 0.34, making us unable to wield.
+-- (Most other forms either don't block the weapon slot or aren't reachable
+-- for qw.) Note these must match the wiz_name of each form, which
+-- you.transform() reports; the serpent form reports itself as
+-- "amphisbaena".
+const.nowield_forms = {
+    ["bat"] = true,
+    ["bat swarm"] = true,
+    ["dragon"] = true,
+    ["fungus"] = true,
+    ["jelly"] = true,
+    ["pig"] = true,
+    ["rime yak"] = true,
+    ["amphisbaena"] = true,
+    ["sphinx"] = true,
+    ["spider"] = true,
+    ["storm"] = true,
+    ["sun scarab"] = true,
+    ["walking scroll"] = true,
+    ["wisp"] = true,
+}
+
 function unable_to_wield_weapon()
     if you.berserk() or you.race() == "Felid" then
         return true
     end
 
-    local form = you.transform()
-    return not (form == ""
-        or form == "tree"
-        or form == "statue"
-        or form == "maw"
-        or form == "death")
+    return const.nowield_forms[you.transform()] or false
 end
 
 function unable_to_swap_weapons()

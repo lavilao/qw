@@ -1,5 +1,63 @@
 # Changelog (through 0.4-a-49-g22c4ca0)
 
+## 0.5.0
+
+This version supports DCSS 0.34.
+
+### API and Compatibility
+* Replace the removed `you.ability_table()` and `you.abilities()` functions
+  with new helpers built on the `you.ability_info()` API.
+* Replace the removed `item.fully_identified` field:
+  + Potion and scroll identification checks now use `item.is_identified`.
+  + Equipment valuation determines identification state via
+    `item.is_identified`, preserving the previous behaviour for artefacts,
+    jewellery, and ego equipment. (Note that `item.ego()` returns nil for
+    unidentified items, so it cannot be used to detect unknown jewellery.)
+* Replace the removed `has_known_ranged_attack()` moninf method with a
+  `range() > 1` check, which covers the same cases (launchers, missiles,
+  offensive spells and wands, and melee reach).
+* Verify the pandemonium lord monster type used for threat assessment
+  against the DCSS 0.34 monster enum (the value is unchanged at 344).
+* Port to Lua 5.4 (crawl switched from Lua 5.1 in DCSS 0.34): replace the
+  removed Lua 5.1-style implicit `arg` table with `select()` and bare
+  `unpack` calls with `table.unpack`.
+* Count staves correctly as gear inventory items, whose terse item class is
+  "magical staff".
+* Treat the serpent talisman form correctly as blocking the weapon slot; it
+  reports itself as "amphisbaena".
+* Handle the DCSS 0.34 inventory changes:
+  + Gear and consumables are stored in separate inventories now, so free
+    inventory slot checks count only gear (weapons, missiles, armour,
+    jewellery, staves, talismans, and gizmos).
+  + qw no longer drops potions, scrolls, or wands, which have unlimited
+    separate inventories and no longer take any inventory slots.
+* Update transformation handling for the shapeshifting rework:
+  + `unable_to_wield_weapon()` now checks the set of forms that block the
+    weapon slot in DCSS 0.34 instead of whitelisting known forms.
+  + Jelly form is now considered a bad form.
+* Answer the new slimy staircase prompt when entering the reworked Slime
+  Pits.
+
+### Gods
+* Update ability names and usage for reworked gods:
+  + Elyvilon: use "Heal Self" (formerly "Greater Healing").
+  + Makhleb: use "Infernal Servant" (formerly "Greater Servant of Makhleb")
+    and "Unleash Destruction" (formerly "Major Destruction").
+  + Yredelemnul: use "Recall Undead Harvest" (formerly "Recall Undead
+    Slaves"). Remove the Drain Life plan, since the Yredelemnul rework
+    removed this ability.
+  + Beogh: use "Recall Apostles" (formerly "Recall Orcish Followers").
+
+### Monsters
+* Add new DCSS 0.33 and 0.34 monsters to the scary monster list: apis,
+  boundless tesseract, hellfire mortar, hoarfrost cannon, orb of winter, and
+  star jelly, with resist checks where appropriate.
+* Orb of winter is added to the cold resistance monster list.
+
+### Spells
+* Replace the removed Necrotise with Soul Splinter in the starting spell
+  list.
+
 ## 0.4-a
 
 This version supports DCSS 0.32-a0.

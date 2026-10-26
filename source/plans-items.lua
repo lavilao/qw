@@ -116,7 +116,7 @@ function can_receive_okawaru_weapon()
     return not c_persist.okawaru_weapon_gifted
         and you.god() == "Okawaru"
         and you.piety_rank() >= 6
-        and contains_string_in("Receive Weapon", you.abilities())
+        and contains_string_in("Receive Weapon", ability_names())
         and can_invoke()
 end
 
@@ -124,7 +124,7 @@ function can_receive_okawaru_armour()
     return not c_persist.okawaru_armour_gifted
         and you.god() == "Okawaru"
         and you.piety_rank() >= 6
-        and contains_string_in("Receive Armour", you.abilities())
+        and contains_string_in("Receive Armour", ability_names())
         and can_invoke()
 end
 
@@ -135,7 +135,7 @@ end
 function can_invent_gizmo()
     return not c_persist.invented_gizmo
         and you.xl() >= 14
-        and contains_string_in("Invent Gizmo", you.abilities())
+        and contains_string_in("Invent Gizmo", ability_names())
 end
 
 function plan_move_for_acquirement()
@@ -586,11 +586,16 @@ end
 
 function want_drop_item(item)
     local class = item.class(true)
-    if class == "missile" and not want_missile(item)
-            or class == "wand" and not want_wand(item)
-            or class == "potion" and not want_potion(item)
-            or class == "scroll" and not want_scroll(item) then
+    if class == "missile" and not want_missile(item) then
         return true
+    end
+
+    -- Since DCSS 0.34, potions, scrolls, and other evokable items are stored
+    -- in separate unlimited inventories, so there's no reason to drop them.
+    -- (Dropping them by letter is also unreliable, since consumable
+    -- inventories use their own separate sets of 52 letters.)
+    if class == "potion" or class == "wand" or class == "scroll" then
+        return false
     end
 
     return equip_slot(item)
@@ -618,7 +623,7 @@ function quaff_unided_potion(min_quantity)
     for it in inventory_iter() do
         if it.class(true) == "potion"
                 and (not min_quantity or it.quantity >= min_quantity)
-                and not it.fully_identified then
+                and not it.is_identified then
             drink_potion(it)
             return true
         end
@@ -636,7 +641,7 @@ end
 
 function read_unided_scroll()
     for item in inventory_iter() do
-        if item.class(true) == "scroll" and not item.fully_identified then
+        if item.class(true) == "scroll" and not item.is_identified then
             read_scroll(item, ".Y")
             return true
         end
@@ -844,7 +849,7 @@ function get_unidentified_item()
     local id_item
     for item in inventory_iter() do
         if item.class(true) == "potion"
-                and not item.fully_identified
+                and not item.is_identified
                 -- Prefer identifying potions over scrolls and prefer
                 -- identifying smaller stacks.
                 and (not id_item
@@ -852,7 +857,7 @@ function get_unidentified_item()
                     or item.quantity < id_item.quantity) then
             id_item = item
         elseif item.class(true) == "scroll"
-                and not item.fully_identified
+                and not item.is_identified
                 and (not id_item or id_item.class(true) ~= "potion")
                 and (not id_item or item.quantity < id_item.quantity) then
             id_item = item

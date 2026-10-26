@@ -791,15 +791,20 @@ function update_equip_tracking()
 end
 
 function equip_is_valuable_unidentified(item)
-    if item.fully_identified then
-        return false
-    elseif item.artefact then
-        return true
+    -- DCSS 0.33 removed item.fully_identified. Artefacts are fully
+    -- identified exactly when is_identified is true; for other equipment we
+    -- check identification state directly below.
+    if item.artefact then
+        return not item.is_identified
     end
 
     local slot = equip_slot(item)
     if slot == "ring" or slot == "amulet" then
-        return true
+        -- Since the item identification flags were simplified (DCSS 0.33),
+        -- jewellery is identified exactly when is_identified is true.
+        -- (Note item.ego() returns nil for unidentified items, so it can't
+        -- be used to distinguish unknown jewellery.)
+        return not item.is_identified
     end
 
     local name = item.name()

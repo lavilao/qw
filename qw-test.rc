@@ -1,0 +1,210 @@
+###############################################################################
+# This rcfile is elliptic's DCSS bot "qw", the first bot to win DCSS with no
+# human assistance. A substantial amount of code here was contributed by
+# elliott or borrowed from N78291's bot "xw", and many others have contributed
+# as well. It is now maintained by the DCSS dev team. For instructions as well
+# as the most up-to-date version of qw, see:
+#
+# https://github.com/crawl/qw.
+#
+# qw settings begin below. Lines beginning with ':' set Lua variables used by
+# the code in qw.lua.
+###############################################################################
+
+#################
+### Interface ###
+#################
+
+# Default username.
+name = qw
+
+# Set to true to have qw play with a delay between each action.
+: DELAYED = false
+
+# Delay per action in milliseconds.
+: DELAY_TIME = 125
+
+# Whether to start playing immediately when a new game is started.
+# Unfortunately this doesn't work if the game starts with a -more-.
+: AUTO_START = true
+
+################
+### Gameplay ###
+################
+
+# Set to true to cycle through the combos in COMBO_CYCLE_LIST.
+: COMBO_CYCLE = false
+
+# The combos to cycle through. Here are some sample choices:
+: COMBO_CYCLE_LIST = "GrBe.handaxe, MiFi.waraxe^OR, GrHu^O"
+
+# Choose randomly between these combos. This will not apply if the COMBO_CYCLE
+# option was on in your _previous_ game.
+combo = GrBe.handaxe
+
+# For random berserkers, use these combos:
+# combo = DEBe.handaxe, DrBe.handaxe, DsBe.handaxe, FeBe.claws, FoBe.handaxe
+# combo += GrBe.handaxe, GhBe.claws, HOBe.handaxe, HuBe.handaxe, KoBe.mace
+# combo += MfBe.spear, MiBe.handaxe, MuBe.handaxe, NaBe.handaxe, OgBe.mace
+# combo += OpBe.handaxe, SpBe.shortsword, TeBe.handaxe, TrBe.claws
+# combo += VSBe.handaxe, VpBe.handaxe, BaBe.handaxe, DjBe.handaxe, PaBe.handaxe
+
+# For a totally random combo (with chosen weapon type), hyperqwcombo.rc can
+# be created using hyperqwcombogen.sh and used:
+# combo =
+# include += hyperqwcombo.rc
+
+# The default acceptable gods; we join whichever one we find first.
+: GOD_LIST = { "Trog", "Okawaru", "Makhleb"}
+
+# Use faded altar, abandoning if we don't get one of the gods in GOD_LIST.
+: FADED_ALTAR = false
+
+# Should Chaos Knight abandon Xom on turn 0.
+: CK_ABANDON_XOM = true
+
+# Use a shield at all cost. Only applies to characters using a melee weapon.
+: SHIELD_CRAZY = true
+
+# Do second lair rune branch before depths.
+: EARLY_SECOND_RUNE = true
+
+# Wait to do Orc until after D:15.
+: LATE_ORC = true
+
+# Lair rune preferences, current options are:
+# * random - no preference, chooses randomly
+# * nowater - does Snake/Spider first
+# * smart - currently prefers Spider > Snake/Swamp > Shoals
+# * dsmart - Swamp/Spider > Snake > Shoals (DsBe data)
+: RUNE_PREFERENCE = "random"
+
+# A table of possible goals.
+: GOALS = {
+:     ["3 Runes"]  = "Normal",
+:     ["15 Runes"] = "Normal, Zot:1-4, Slime:5, God:TSO, Crypt, Tomb, Pan"
+:                    .. ", Hells, Abyss, Win",
+:     ["Zig"] = "Normal, Zot:1-4, God:TSO, Crypt, Zig, Win",
+:     ["All"] = "Normal, Zot:1-4, Slime:5, God:TSO, Crypt, Tomb, Pan, Hells"
+:                    .. ", Abyss, Win",
+: }
+
+# The default goal that qw will attempt.
+: DEFAULT_GOAL = "3 Runes"
+
+# Timed portals we're allowed to attempt.
+: ALLOWED_PORTALS = {"Bazaar", "Sewer", "Ossuary", "Gauntlet", "WizLab",
+:                    "Desolation"}
+
+# Panic (stop) at full inventory.
+: FULL_INVENTORY_PANIC = true
+
+# Quit after this number of turns while stuck.
+: QUIT_TURNS = 1000
+
+#############################
+### Miscellaneous options ###
+#############################
+
+autofight_stop = 0
+restart_after_game = false
+equip_bar = true
+ability_menu = false
+force_ability_targeter =
+force_spell_targeter =
+view_delay = 20
+use_animations = beam, pickup, player, branch_entry
+darken_beyond_range = false
+clear_messages = true
+travel_delay = -1
+explore_delay = -1
+rest_delay = -1
+travel_key_stop = false
+default_manual_training = true
+auto_exclude =
+hp_warning = 0
+show_more = false
+show_newturn_mark = false
+force_more_message =
+show_travel_trail = false
+skill_focus = false
+# Let's go.
+autoinscribe += slay:mikee
+flush.failure = false
+char_set = ascii
+cset = cloud:xa4
+cset = item_orb:0
+use_fake_player_cursor = true
+equip_unequip = true
+
+dump_order = header,hiscore,stats,misc,mutations,skills,spells,inventory
+dump_order += overview,messages,screenshot,monlist,kills,notes,vaults
+dump_order += skill_gains,action_counts,xp_by_level
+ood_interesting = 6
+note_hp_percent = 25
+note_skill_levels = 1,3,6,9,12,15,18,21,24,27
+note_all_spells = true
+
+fire_order = launcher, rock, javelin, boomerang
+
+read_persist_options = true
+
+message_colour ^= mute:Unknown command
+
+explore_stop =
+explore_stop += items,branches,portals,stairs,altars
+explore_stop += greedy_visited_item_stack,greedy_pickup_smart
+
+stop := runrest_stop_message
+ignore := runrest_ignore_message
+stop =
+ignore =
+ignore += .*
+
+runrest_ignore_poison = 3:15
+
+# These keys are useful to answer prompts and aren't critical for manual play.
+bindkey = [Y] CMD_NO_CMD_DEFAULT
+bindkey = [N] CMD_NO_CMD_DEFAULT
+bindkey = [B] CMD_NO_CMD_DEFAULT
+bindkey = [C] CMD_NO_CMD_DEFAULT
+bindkey = [.] CMD_NO_CMD_DEFAULT
+# Down arrow; we use this only for menus.
+bindkey = [\{-253}] CMD_NO_CMD_DEFAULT
+bindkey = [^D] CMD_LUA_CONSOLE
+
+# Autopickup is handled directly by qw.
+autopickup =
+autopickup_exceptions =
+
+# Use the coroutine to break up execution so as to avoid lua throttling and
+# high memory usage.
+: COROUTINE_THROTTLE = true
+
+# How much memory in megabytes qw is allowed to use before trying to garbage
+# collect and subsequently terminating if it's still using more than this
+# limit. Note that you muse use the -lua-max-memory crawl command-line option
+# to actually give qw more memory than the default of 16mb. Setting MAX_MEMORY
+# a few mb less than the value used for -lua-max-memory may let you detect and
+# debug memory leaks without losing data in e.g. c_persist.
+: MAX_MEMORY = 120
+
+#################
+### Debugging ###
+#################
+
+# Enable debug output.
+: DEBUG_MODE = false
+
+# Which debug message channels to output.
+: DEBUG_CHANNELS = { "goals", "plans" }
+
+# Tab just takes a single action (for testing).
+: SINGLE_STEP = false
+
+# Enable to allow death in Wizard mode.
+: WIZMODE_DEATH = false
+
+# See README.md for details on using make-qw.sh to either set up a qw.lua file
+# or include the lua from the line below.
+include = qw.lua

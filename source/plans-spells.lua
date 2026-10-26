@@ -3,7 +3,7 @@ function get_starting_spell()
         return
     end
 
-    local spell_list = { "Foxfire", "Freeze", "Magic Dart", "Necrotise", "Sandblast",
+    local spell_list = { "Foxfire", "Freeze", "Magic Dart", "Soul Splinter", "Sandblast",
         "Shock", "Sting", "Summon Small Mammal" }
     for _, sp in ipairs(spell_list) do
         if spells.memorised(sp) and spells.fail(sp) <= 25 then

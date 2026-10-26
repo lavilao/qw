@@ -212,12 +212,32 @@ function floor_item_iter()
     return iter.invent_iterator:new(you.floor_items())
 end
 
+-- Since DCSS 0.34, gear and consumables are stored in separate inventories:
+-- 52 gear slots (weapons, missiles, armour, jewellery, staves, talismans, and
+-- gizmos) and unlimited potions, scrolls, and other evokable items. Only gear
+-- can fill up, so only it is counted here.
+const.gear_classes = {
+    ["weapon"] = true,
+    ["missile"] = true,
+    ["armour"] = true,
+    ["jewellery"] = true,
+    -- Staves report a terse class of "magical staff" (items.lua of crawl
+    -- special-cases OBJ_STAVES in item_class_name), but we also include
+    -- "staff" as a fallback in case that special case is removed.
+    ["magical staff"] = true,
+    ["staff"] = true,
+    ["talisman"] = true,
+    ["gizmo"] = true,
+}
+
 function free_inventory_slots()
     local slots = 52
-    for _ in inventory_iter() do
-        slots = slots - 1
+    for item in inventory_iter() do
+        if const.gear_classes[item.class(true)] then
+            slots = slots - 1
+        end
     end
-    return slots
+    return max(slots, 0)
 end
 
 function item_letter(item)
@@ -349,7 +369,7 @@ function get_unidentified_item()
     local id_item
     for item in inventory_iter() do
         if item.class(true) == "potion"
-                and not item.fully_identified
+                and not item.is_identified
                 -- Prefer identifying potions over scrolls and prefer
                 -- identifying smaller stacks.
                 and (not id_item
@@ -357,7 +377,7 @@ function get_unidentified_item()
                     or item.quantity < id_item.quantity) then
             id_item = item
         elseif item.class(true) == "scroll"
-                and not item.fully_identified
+                and not item.is_identified
                 and (not id_item or id_item.class(true) ~= "potion")
                 and (not id_item or item.quantity < id_item.quantity) then
             id_item = item

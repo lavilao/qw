@@ -39,6 +39,11 @@ function c_answer_prompt(prompt)
         return false
     elseif prompt:find("Have to go through") then
         return true
+    elseif prompt:find("unable to climb back up again") then
+        -- Entering the Slime Pits before the Royal Jelly is dead (DCSS 0.34
+        -- slimy stairs); we only enter Slime when getting its rune, and
+        -- killing the Royal Jelly reopens the stairs.
+        return true
     elseif prompt:find("transient mutations") then
         return true
     elseif prompt:find("Really")
